@@ -1,0 +1,971 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>A Surprise For Sharath 🎁</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;900&family=Lora:ital,wght@0,400;0,600;1,400;1,600&family=Sacramento&family=Montserrat:wght@300;400;500&display=swap" rel="stylesheet"/>
+<style>
+/* ═══════════════════════════════════════════
+   ROOT & RESET
+═══════════════════════════════════════════ */
+:root{
+  --ink:#0a0a0f;--parchment:#fdf6e3;--gold:#d4a017;
+  --gold-light:#f5c842;--rose:#c0392b;--rose-light:#e74c3c;
+  --emerald:#1a6b3c;--cream:#fffdf7;--shadow:rgba(0,0,0,0.6);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{width:100%;min-height:100vh;overflow-x:hidden}
+body{background:#0a0007;font-family:'Lora',serif}
+
+/* ═══════════════════════════════════════════
+   GALAXY CANVAS (always behind everything)
+═══════════════════════════════════════════ */
+#galaxy{position:fixed;inset:0;z-index:0}
+
+/* ═══════════════════════════════════════════
+   SCREEN 1 — SURPRISE DOOR
+═══════════════════════════════════════════ */
+#screen-surprise{
+  position:fixed;inset:0;z-index:100;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  background:radial-gradient(ellipse at center, #1a0030 0%, #0a0007 70%);
+  transition:opacity 0.8s ease, transform 0.8s ease;
+}
+#screen-surprise.hide{opacity:0;pointer-events:none;transform:scale(1.06)}
+
+.surprise-label{
+  font-family:'Sacramento',cursive;
+  font-size:clamp(1.4rem,4vw,2.2rem);
+  color:rgba(212,160,23,0.7);
+  letter-spacing:4px;
+  margin-bottom:40px;
+  animation:pulse 2s ease-in-out infinite;
+}
+@keyframes pulse{0%,100%{opacity:0.6}50%{opacity:1}}
+
+/* GIFT BOX */
+.gift-wrap{
+  position:relative;width:160px;height:160px;
+  cursor:pointer;
+  animation:giftFloat 3s ease-in-out infinite;
+  margin-bottom:40px;
+}
+@keyframes giftFloat{
+  0%,100%{transform:translateY(0) rotate(-1deg)}
+  50%{transform:translateY(-16px) rotate(1deg)}
+}
+.gift-wrap:hover{animation:giftShake 0.4s ease-in-out infinite}
+@keyframes giftShake{
+  0%,100%{transform:rotate(-3deg) scale(1.05)}
+  50%{transform:rotate(3deg) scale(1.05)}
+}
+
+/* Box body */
+.box-body{
+  position:absolute;bottom:0;left:10px;right:10px;height:100px;
+  background:linear-gradient(145deg,#c0392b,#96281b);
+  border-radius:4px 4px 8px 8px;
+  box-shadow:0 8px 32px rgba(192,57,43,0.5),inset 0 1px 0 rgba(255,255,255,0.15);
+  overflow:hidden;
+}
+.box-body::before{
+  content:'';position:absolute;top:0;bottom:0;left:50%;width:20px;
+  transform:translateX(-50%);
+  background:linear-gradient(180deg,#f5c842,#d4a017);
+}
+.box-body::after{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(90deg,rgba(0,0,0,0.15) 0%,transparent 40%,transparent 60%,rgba(0,0,0,0.15) 100%);
+}
+/* Box lid */
+.box-lid{
+  position:absolute;bottom:90px;left:0;right:0;height:32px;
+  background:linear-gradient(145deg,#e74c3c,#c0392b);
+  border-radius:6px;
+  box-shadow:0 4px 12px rgba(0,0,0,0.4),inset 0 1px 0 rgba(255,255,255,0.2);
+  transform-origin:center bottom;
+  transition:transform 0.6s cubic-bezier(0.34,1.56,0.64,1);
+  z-index:2;
+}
+.box-lid::before{
+  content:'';position:absolute;top:0;bottom:0;left:50%;width:20px;
+  transform:translateX(-50%);
+  background:linear-gradient(180deg,#f5c842,#d4a017);
+}
+/* Ribbon bow */
+.bow{
+  position:absolute;bottom:118px;left:50%;transform:translateX(-50%);
+  width:60px;height:36px;z-index:3;
+  transition:transform 0.6s cubic-bezier(0.34,1.56,0.64,1),opacity 0.3s;
+}
+.bow-left,.bow-right{
+  position:absolute;bottom:0;width:26px;height:22px;
+  border-radius:50% 50% 0 0;
+  background:linear-gradient(135deg,#f5c842,#d4a017);
+  box-shadow:0 2px 8px rgba(0,0,0,0.3);
+}
+.bow-left{left:0;transform:rotate(-30deg);transform-origin:right bottom}
+.bow-right{right:0;transform:rotate(30deg);transform-origin:left bottom}
+.bow-center{
+  position:absolute;bottom:0;left:50%;width:12px;height:12px;
+  transform:translateX(-50%);border-radius:50%;
+  background:linear-gradient(135deg,#f5c842,#d4a017);
+  box-shadow:0 2px 8px rgba(0,0,0,0.4);
+}
+
+.gift-wrap.opening .box-lid{transform:rotateX(-140deg)}
+.gift-wrap.opening .bow{transform:translateX(-50%) translateY(-30px) scale(0.5);opacity:0}
+
+/* Stars bursting from box */
+.burst-star{
+  position:absolute;font-size:1.4rem;
+  opacity:0;pointer-events:none;
+  animation:starBurst 1s ease-out forwards;
+}
+@keyframes starBurst{
+  0%{transform:translate(0,0) scale(0);opacity:1}
+  100%{transform:translate(var(--bx),var(--by)) scale(1.5);opacity:0}
+}
+
+.open-hint{
+  font-family:'Montserrat',sans-serif;
+  font-size:0.8rem;font-weight:300;
+  color:rgba(245,200,66,0.5);
+  letter-spacing:4px;text-transform:uppercase;
+  animation:hintBlink 1.5s ease-in-out infinite;
+}
+@keyframes hintBlink{0%,100%{opacity:0.4}50%{opacity:1}}
+
+/* ═══════════════════════════════════════════
+   SCREEN 2 — ENVELOPE
+═══════════════════════════════════════════ */
+#screen-envelope{
+  position:fixed;inset:0;z-index:50;
+  display:flex;align-items:center;justify-content:center;
+  opacity:0;pointer-events:none;
+  transition:opacity 0.6s ease;
+  background:radial-gradient(ellipse at center,#120025 0%,#05000f 100%);
+}
+#screen-envelope.show{opacity:1;pointer-events:all}
+#screen-envelope.hide{opacity:0;pointer-events:none}
+
+.envelope-scene{
+  position:relative;
+  width:min(520px,90vw);
+  cursor:pointer;
+}
+
+/* ENVELOPE BODY */
+.env-body{
+  position:relative;
+  width:100%;
+  height:min(340px,55vw);
+  background:linear-gradient(160deg,#fdf6e3,#f5ead0);
+  border-radius:4px 4px 12px 12px;
+  box-shadow:0 20px 80px rgba(0,0,0,0.7),0 0 0 1px rgba(212,160,23,0.3);
+  overflow:hidden;
+}
+.env-body::before{/* diagonal fold lines */
+  content:'';position:absolute;inset:0;
+  background:
+    linear-gradient(135deg,rgba(212,160,23,0.12) 49.5%,transparent 50%),
+    linear-gradient(225deg,rgba(212,160,23,0.12) 49.5%,transparent 50%);
+}
+
+/* wax seal */
+.wax-seal{
+  position:absolute;bottom:24px;left:50%;transform:translateX(-50%);
+  width:70px;height:70px;border-radius:50%;
+  background:radial-gradient(circle at 35% 35%,#e74c3c,#8b1a1a);
+  box-shadow:0 4px 16px rgba(192,57,43,0.6),inset 0 2px 4px rgba(255,255,255,0.2);
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.8rem;
+  animation:sealPulse 2s ease-in-out infinite;
+  z-index:2;
+}
+@keyframes sealPulse{0%,100%{box-shadow:0 4px 16px rgba(192,57,43,0.6)}50%{box-shadow:0 4px 32px rgba(192,57,43,0.9),0 0 40px rgba(245,200,66,0.3)}}
+
+.env-address{
+  position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+  text-align:center;margin-top:-20px;
+}
+.env-to{font-family:'Montserrat',sans-serif;font-size:0.65rem;font-weight:300;color:#8b7355;letter-spacing:3px;text-transform:uppercase;margin-bottom:6px}
+.env-name{font-family:'Sacramento',cursive;font-size:clamp(1.8rem,5vw,2.8rem);color:#3d2b00;line-height:1}
+
+.env-stamp{
+  position:absolute;top:16px;right:16px;
+  width:52px;height:62px;
+  background:linear-gradient(135deg,#fdf6e3,#ede8d0);
+  border:2px dashed rgba(212,160,23,0.5);
+  border-radius:2px;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  font-size:1.4rem;
+  box-shadow:2px 2px 8px rgba(0,0,0,0.15);
+}
+.env-stamp-text{font-size:0.45rem;font-family:'Montserrat',sans-serif;color:#8b7355;letter-spacing:1px;margin-top:2px}
+
+.env-from{
+  position:absolute;top:16px;left:16px;
+  font-family:'Montserrat',sans-serif;font-size:0.65rem;font-weight:300;
+  color:#8b7355;text-transform:uppercase;letter-spacing:1px;text-align:left;
+  line-height:1.4;
+}
+.env-from strong{font-weight:600;color:#3d2b00}
+
+/* ENVELOPE FLAP — the magic */
+.env-flap{
+  position:absolute;top:0;left:0;right:0;
+  height:min(180px,30vw);
+  transform-origin:top center;
+  transform:rotateX(0deg);
+  transition:transform 1s cubic-bezier(0.4,0,0.2,1);
+  z-index:10;
+  transform-style:preserve-3d;
+}
+.env-flap-front,.env-flap-back{
+  position:absolute;inset:0;
+  backface-visibility:hidden;
+  clip-path:polygon(0 0,100% 0,50% 100%);
+}
+.env-flap-front{background:linear-gradient(160deg,#f0e8cc,#e8d9a8);box-shadow:0 4px 20px rgba(0,0,0,0.2)}
+.env-flap-front::after{content:'';position:absolute;inset:0;background:linear-gradient(160deg,rgba(212,160,23,0.15),transparent);clip-path:polygon(0 0,100% 0,50% 100%)}
+.env-flap-back{background:linear-gradient(160deg,#ede4c8,#dfd0a0);transform:rotateX(180deg)}
+
+.env-scene-wrap{perspective:1200px}
+.env-flap-open{transform:rotateX(-180deg) !important}
+
+/* letter peeking out */
+.letter-peek{
+  position:absolute;bottom:0;left:50%;transform:translateX(-50%);
+  width:85%;
+  background:linear-gradient(180deg,#fffdf7,#fdf8ef);
+  border-radius:6px 6px 0 0;
+  padding:20px 24px;
+  text-align:center;
+  box-shadow:0 -4px 20px rgba(0,0,0,0.1);
+  transition:transform 1s cubic-bezier(0.34,1.2,0.64,1);
+  transform:translateY(100%) translateX(-50%);
+  left:7.5%;
+  z-index:1;
+}
+.letter-peek.rise{transform:translateY(0)}
+.peek-text{font-family:'Sacramento',cursive;font-size:1.6rem;color:#3d2b00}
+.peek-sub{font-family:'Montserrat',sans-serif;font-size:0.65rem;font-weight:300;color:#8b7355;letter-spacing:2px;margin-top:4px}
+
+.env-click-hint{
+  text-align:center;margin-top:20px;
+  font-family:'Montserrat',sans-serif;font-size:0.75rem;font-weight:300;
+  color:rgba(245,200,66,0.5);letter-spacing:4px;text-transform:uppercase;
+  animation:hintBlink 1.5s ease-in-out infinite;
+}
+
+/* ═══════════════════════════════════════════
+   SCREEN 3 — THE ACTUAL CARD
+═══════════════════════════════════════════ */
+#screen-card{
+  position:relative;z-index:10;
+  min-height:100vh;
+  display:none;
+  flex-direction:column;
+  align-items:center;
+  padding:40px 16px 100px;
+}
+#screen-card.show{display:flex}
+
+/* ── HEADER HERO ── */
+.card-hero{
+  max-width:740px;width:100%;
+  text-align:center;
+  padding:60px 30px 50px;
+  position:relative;
+  animation:heroIn 1.2s cubic-bezier(0.16,1,0.3,1) both;
+}
+@keyframes heroIn{from{opacity:0;transform:translateY(50px)}to{opacity:1;transform:translateY(0)}}
+
+.hero-top-line{
+  font-family:'Montserrat',sans-serif;font-weight:300;
+  font-size:0.75rem;letter-spacing:8px;text-transform:uppercase;
+  color:rgba(212,160,23,0.6);margin-bottom:24px;
+}
+
+.confetti-strip{
+  display:flex;justify-content:center;gap:8px;
+  font-size:1.6rem;margin-bottom:20px;
+  animation:stripDance 2s ease-in-out infinite;
+}
+.confetti-strip span:nth-child(even){animation:bounce2 1.5s ease-in-out infinite alternate}
+.confetti-strip span:nth-child(odd){animation:bounce2 1.5s ease-in-out 0.4s infinite alternate}
+@keyframes bounce2{from{transform:translateY(0)}to{transform:translateY(-12px)}}
+@keyframes stripDance{0%,100%{transform:scale(1)}50%{transform:scale(1.04)}}
+
+.main-hb{
+  font-family:'Cinzel',serif;font-weight:900;
+  font-size:clamp(1rem,4vw,1.6rem);
+  color:var(--gold-light);letter-spacing:10px;text-transform:uppercase;
+  text-shadow:0 0 30px rgba(245,200,66,0.5);
+  margin-bottom:8px;
+}
+.main-name{
+  font-family:'Sacramento',cursive;
+  font-size:clamp(3rem,10vw,6rem);
+  background:linear-gradient(135deg,#f5c842,#e09820,#ff7eb3,#c084fc);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  filter:drop-shadow(0 0 20px rgba(245,200,66,0.4));
+  line-height:1;margin-bottom:16px;
+  animation:nameShimmer 4s ease-in-out infinite;
+}
+@keyframes nameShimmer{
+  0%,100%{filter:drop-shadow(0 0 20px rgba(245,200,66,0.4))}
+  50%{filter:drop-shadow(0 0 40px rgba(245,200,66,0.8)) drop-shadow(0 0 60px rgba(255,126,179,0.4))}
+}
+.main-date{
+  display:inline-block;
+  font-family:'Cinzel',serif;font-size:0.85rem;font-weight:600;
+  color:var(--gold);letter-spacing:6px;
+  border-top:1px solid rgba(212,160,23,0.3);
+  border-bottom:1px solid rgba(212,160,23,0.3);
+  padding:8px 24px;margin-top:4px;
+}
+.main-age{
+  font-family:'Montserrat',sans-serif;font-weight:400;
+  font-size:0.85rem;letter-spacing:3px;text-transform:uppercase;
+  color:rgba(212,160,23,0.8);margin-top:12px;
+  animation:fadeUp 1.2s ease 0.5s both;
+}
+
+/* ── PHOTO CIRCLE ── */
+.photo-container{
+  max-width:740px;width:100%;
+  display:flex;flex-direction:column;align-items:center;
+  padding:30px 20px 20px;
+  animation:fadeUp 1s ease 0.3s both;
+}
+@keyframes fadeUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+
+.photo-universe{
+  position:relative;width:220px;height:220px;
+}
+.ring-outer{
+  position:absolute;top:50%;left:50%;
+  border-radius:50%;border-style:solid;
+  transform:translate(-50%,-50%);
+  animation:ringSpin linear infinite;
+}
+.r1{width:270px;height:270px;margin:-135px;border:1px dashed rgba(245,200,66,0.2);animation-duration:20s}
+.r2{width:300px;height:300px;margin:-150px;border:1px dashed rgba(192,132,252,0.15);animation-duration:30s;animation-direction:reverse}
+.r3{width:240px;height:240px;margin:-120px;border:1px solid rgba(245,200,66,0.3);animation-duration:12s}
+@keyframes ringSpin{from{transform:translate(-50%,-50%) rotate(0deg)}to{transform:translate(-50%,-50%) rotate(360deg)}}
+
+/* dots on rings */
+.r3::before,.r3::after{content:'✦';position:absolute;color:var(--gold-light);font-size:0.8rem;text-shadow:0 0 8px rgba(245,200,66,0.8)}
+.r3::before{top:-8px;left:50%;transform:translateX(-50%)}
+.r3::after{bottom:-8px;left:50%;transform:translateX(-50%)}
+
+.photo-circle{
+  position:absolute;top:50%;left:50%;
+  width:200px;height:200px;
+  transform:translate(-50%,-50%);
+  border-radius:50%;
+  padding:4px;
+  background:conic-gradient(#f5c842,#ff7eb3,#c084fc,#22d3ee,#f5c842);
+  box-shadow:0 0 50px rgba(245,200,66,0.4),0 0 100px rgba(192,132,252,0.2);
+}
+.photo-inner{
+  width:100%;height:100%;border-radius:50%;
+  border:4px solid #08001a;
+  background:linear-gradient(145deg,#2d0060,#12002a);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  overflow:hidden;gap:6px;
+}
+.photo-inner img{width:100%;height:100%;object-fit:cover;display:block}
+.ph-ico{font-size:2.8rem}.ph-txt{font-size:0.6rem;color:rgba(255,248,240,0.35);letter-spacing:1px;text-align:center;padding:0 14px;font-family:'Montserrat',sans-serif;font-weight:300}
+
+.photo-star-label{
+  margin-top:24px;font-family:'Sacramento',cursive;
+  font-size:1.8rem;color:var(--gold-light);
+  text-shadow:0 0 20px rgba(245,200,66,0.5);
+}
+
+/* ── GOLDEN RULE ── */
+.golden-rule{
+  max-width:740px;width:100%;
+  display:flex;align-items:center;gap:12px;
+  padding:8px 30px;
+  animation:fadeUp 1s ease 0.4s both;
+}
+.gr-line{flex:1;height:1px;background:linear-gradient(90deg,transparent,rgba(212,160,23,0.4),transparent)}
+.gr-gem{color:var(--gold);font-size:1rem;letter-spacing:6px}
+
+/* ── TYPEWRITER LETTER ── */
+.typewriter-section{
+  max-width:740px;width:100%;
+  background:linear-gradient(160deg,rgba(253,246,227,0.07),rgba(253,246,227,0.04));
+  border:1px solid rgba(212,160,23,0.2);
+  border-radius:20px;
+  padding:40px 50px;
+  margin:0 0 6px;
+  position:relative;overflow:hidden;
+  animation:fadeUp 1s ease 0.5s both;
+}
+.typewriter-section::before{
+  content:'"';
+  position:absolute;top:-10px;left:20px;
+  font-family:'Lora',serif;font-size:120px;
+  color:rgba(212,160,23,0.08);line-height:1;
+  pointer-events:none;
+}
+.tw-label{
+  font-family:'Cinzel',serif;font-size:0.7rem;font-weight:600;
+  letter-spacing:5px;text-transform:uppercase;
+  color:rgba(245,200,66,0.5);margin-bottom:20px;
+}
+#typewriter-text{
+  font-family:'Lora',serif;font-size:clamp(0.95rem,2.2vw,1.1rem);
+  font-style:italic;color:rgba(255,248,240,0.85);
+  line-height:2;min-height:120px;
+}
+#tw-cursor{
+  display:inline-block;width:2px;height:1.1em;
+  background:var(--gold-light);vertical-align:middle;
+  animation:twBlink 0.7s ease-in-out infinite;
+}
+@keyframes twBlink{0%,100%{opacity:1}50%{opacity:0}}
+
+/* ── WISH PETALS ── */
+.petals-section{
+  max-width:740px;width:100%;
+  padding:10px 0 0;
+  animation:fadeUp 1s ease 0.6s both;
+}
+.petals-title{
+  text-align:center;font-family:'Sacramento',cursive;
+  font-size:1.8rem;color:var(--gold-light);
+  text-shadow:0 0 16px rgba(245,200,66,0.4);
+  margin-bottom:20px;
+}
+.petals-grid{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));
+  gap:12px;
+}
+.petal{
+  position:relative;overflow:hidden;
+  border-radius:60% 40% 60% 40% / 40% 60% 40% 60%;
+  background:linear-gradient(135deg,rgba(30,5,60,0.8),rgba(60,10,80,0.6));
+  border:1px solid rgba(212,160,23,0.2);
+  padding:22px 14px;text-align:center;
+  transition:transform 0.4s cubic-bezier(0.34,1.56,0.64,1),box-shadow 0.3s,border-radius 0.4s;
+  cursor:default;
+}
+.petal:hover{
+  transform:scale(1.08) rotate(-1deg);
+  box-shadow:0 12px 40px rgba(212,160,23,0.25);
+  border-color:rgba(245,200,66,0.5);
+  border-radius:50%;
+}
+.petal::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(circle at 30% 30%,rgba(255,255,255,0.07),transparent);
+}
+.p-icon{font-size:2rem;margin-bottom:8px;display:block}
+.p-title{font-family:'Cinzel',serif;font-size:0.85rem;font-weight:600;color:var(--gold);margin-bottom:6px}
+.p-text{font-size:0.8rem;font-style:italic;color:rgba(255,248,240,0.65);line-height:1.5}
+
+/* ── HEART SCROLL ── */
+.heart-scroll{
+  max-width:740px;width:100%;
+  position:relative;margin:8px 0 0;
+  animation:fadeUp 1s ease 0.7s both;
+}
+.hs-bg{
+  position:absolute;inset:0;border-radius:24px;
+  background:linear-gradient(160deg,rgba(139,26,26,0.35),rgba(80,10,60,0.5));
+  border:1px solid rgba(192,57,43,0.35);
+}
+.hs-bg::after{
+  content:'';position:absolute;inset:0;
+  background:url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M20 30 C20 30 5 20 5 12 C5 7 10 4 15 7 C17 8 19 10 20 12 C21 10 23 8 25 7 C30 4 35 7 35 12 C35 20 20 30 20 30Z' fill='rgba(192,57,43,0.04)'/%3E%3C/svg%3E") repeat;
+}
+.hs-content{
+  position:relative;z-index:2;
+  padding:38px 50px;text-align:center;
+}
+.hs-title{
+  font-family:'Sacramento',cursive;font-size:2rem;
+  color:#ff8a80;text-shadow:0 0 20px rgba(255,138,128,0.5);
+  margin-bottom:18px;
+  animation:heartbeat 1.6s ease-in-out infinite;
+}
+@keyframes heartbeat{0%,100%{transform:scale(1)}20%{transform:scale(1.05)}40%{transform:scale(1)}60%{transform:scale(1.03)}}
+.hs-body{
+  font-size:clamp(0.9rem,2vw,1.08rem);
+  font-style:italic;color:rgba(255,248,240,0.85);
+  line-height:2.1;max-width:580px;margin:0 auto;
+}
+.hs-body .lh{color:#f5c842;font-style:normal;font-weight:600}
+.hs-body .lh2{color:#c084fc;font-style:normal}
+.hs-body .lh3{color:#ff8a80;font-style:normal}
+
+/* ── SIGNATURE ── */
+.signature-block{
+  max-width:740px;width:100%;
+  text-align:center;padding:32px 20px 20px;
+  animation:fadeUp 1s ease 0.8s both;
+}
+.sig-pre{font-family:'Montserrat',sans-serif;font-weight:300;font-size:0.72rem;letter-spacing:4px;text-transform:uppercase;color:rgba(255,248,240,0.3);margin-bottom:10px}
+.sig-name{font-family:'Sacramento',cursive;font-size:2.6rem;color:var(--gold-light);text-shadow:0 0 24px rgba(245,200,66,0.5);margin-bottom:8px}
+.sig-hearts{font-size:1.5rem;letter-spacing:8px;animation:sigFloat 2s ease-in-out infinite alternate}
+@keyframes sigFloat{from{transform:translateY(0)}to{transform:translateY(-8px)}}
+.sig-hint{margin-top:16px;font-family:'Montserrat',sans-serif;font-size:0.65rem;font-weight:300;color:rgba(245,200,66,0.25);letter-spacing:3px;font-style:italic}
+
+/* ── FOOTER ORNAMENT ── */
+.footer-orn{text-align:center;padding:20px 0 10px;font-size:1rem;letter-spacing:12px;color:rgba(212,160,23,0.25);animation:fadeUp 1s ease 0.9s both}
+
+/* ── CANVAS FIREWORKS ON TOP ── */
+#fw-canvas{position:fixed;inset:0;z-index:5;pointer-events:none}
+
+/* ── CONFETTI PIECES ── */
+.cp{position:fixed;pointer-events:none;z-index:9998;animation:cpFall linear forwards}
+@keyframes cpFall{0%{opacity:1;transform:translateY(-40px) rotate(0deg)}100%{opacity:0;transform:translateY(110vh) rotate(900deg)}}
+
+/* ── FLOATING EMOJI ── */
+.fp{position:fixed;pointer-events:none;z-index:6;animation:fpFloat linear infinite;opacity:0}
+@keyframes fpFloat{0%{transform:translateY(105vh) rotate(0deg);opacity:0}8%{opacity:1}92%{opacity:0.8}100%{transform:translateY(-8vh) rotate(720deg);opacity:0}}
+
+.open-time-badge{
+  position:absolute;top:16px;right:16px;
+  font-family:'Montserrat',sans-serif;font-size:0.65rem;font-weight:300;
+  color:rgba(245,200,66,0.6);letter-spacing:2px;text-transform:uppercase;
+  z-index:50;border:1px solid rgba(212,160,23,0.3);
+  padding:6px 12px;border-radius:4px;
+  background:rgba(10,0,7,0.5);backdrop-filter:blur(4px);
+  animation:fadeUp 1s ease 1.2s both;
+}
+
+@media(max-width:500px){
+  .typewriter-section,.hs-content{padding-left:22px;padding-right:22px}
+  .card-hero{padding:40px 16px 36px}
+  .golden-rule,.petals-section,.heart-scroll,.signature-block{padding-left:12px;padding-right:12px}
+  .heart-scroll{margin-left:0;margin-right:0}
+}
+</style>
+</head>
+<body>
+
+<canvas id="galaxy"></canvas>
+<canvas id="fw-canvas"></canvas>
+
+<!-- ══════════════════════════════════════
+     SCREEN 1: SURPRISE GIFT BOX
+══════════════════════════════════════ -->
+<div id="screen-surprise">
+  <div class="surprise-label">✦ &nbsp; A Special Surprise Awaits You &nbsp; ✦</div>
+
+  <div class="gift-wrap" id="giftBox" onclick="openGift()">
+    <div class="bow">
+      <div class="bow-left"></div>
+      <div class="bow-right"></div>
+      <div class="bow-center"></div>
+    </div>
+    <div class="box-lid"></div>
+    <div class="box-body"></div>
+  </div>
+
+  <div class="open-hint">🎁 &nbsp; Click the gift to open &nbsp; 🎁</div>
+</div>
+
+<!-- ══════════════════════════════════════
+     SCREEN 2: ENVELOPE
+══════════════════════════════════════ -->
+<div id="screen-envelope">
+  <div style="display:flex;flex-direction:column;align-items:center;gap:16px">
+    <div class="envelope-scene" id="envelopeScene" onclick="openEnvelope()">
+      <div class="env-scene-wrap">
+        <div class="env-body">
+          <div class="env-from">From<br><strong>Yogi</strong></div>
+          <div class="env-stamp">🎂<div class="env-stamp-text">SPECIAL</div></div>
+          <div class="env-address">
+            <div class="env-to">To</div>
+            <div class="env-name">Sharath K P</div>
+          </div>
+          <div class="wax-seal" id="waxSeal">💌</div>
+          <div class="letter-peek" id="letterPeek">
+            <div class="peek-text">Happy 20th!</div>
+            <div class="peek-sub">✦ open to read ✦</div>
+          </div>
+        </div>
+        <div class="env-flap" id="envFlap">
+          <div class="env-flap-front"></div>
+          <div class="env-flap-back"></div>
+        </div>
+      </div>
+    </div>
+    <div class="env-click-hint" id="envHint">✦ &nbsp; tap the envelope &nbsp; ✦</div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     SCREEN 3: THE FULL CARD
+══════════════════════════════════════ -->
+<div id="screen-card">
+  <div class="open-time-badge" id="openTimeBadge">Opened: --:--</div>
+
+  <!-- HERO -->
+  <div class="card-hero">
+    <div class="hero-top-line">✦ &nbsp; A Birthday Greeting From The Heart &nbsp; ✦</div>
+    <div class="confetti-strip">
+      <span>🎊</span><span>🎉</span><span>🎈</span><span>🎂</span><span>🎈</span><span>🎉</span><span>🎊</span>
+    </div>
+    <div class="main-hb">Happy 20th Birthday</div>
+    <div class="main-name">Sharath K P</div>
+    <div class="main-date">✦ &nbsp; 05 · 05 · 2026 &nbsp; ✦</div>
+  </div>
+
+  <!-- PHOTO -->
+  <div class="photo-container">
+    <div class="photo-universe">
+      <div class="ring-outer r1"></div>
+      <div class="ring-outer r2"></div>
+      <div class="ring-outer r3"></div>
+      <div class="photo-circle">
+        <div class="photo-inner">
+          <!--
+            ════════════════════════════════════
+            SHARATH'S PHOTO:
+            ════════════════════════════════════
+          -->
+          <img src="sharath.jpeg" alt="Sharath" style="width:100%; height:100%; object-fit:cover; border-radius:50%;">
+        </div>
+      </div>
+    </div>
+    <div class="photo-star-label">✨ The Guest of Honour ✨</div>
+  </div>
+
+  <!-- GOLDEN RULE -->
+  <div class="golden-rule">
+    <div class="gr-line"></div>
+    <span class="gr-gem">✦ ♥ ✦</span>
+    <div class="gr-line"></div>
+  </div>
+
+  <!-- TYPEWRITER LETTER -->
+  <div class="typewriter-section">
+    <div class="tw-label">✦ &nbsp; A personal note &nbsp; ✦</div>
+    <div id="typewriter-text"><span id="tw-cursor"></span></div>
+  </div>
+
+  <!-- GOLDEN RULE -->
+  <div class="golden-rule">
+    <div class="gr-line"></div>
+    <span class="gr-gem">🌸</span>
+    <div class="gr-line"></div>
+  </div>
+
+  <!-- WISH PETALS -->
+  <div class="petals-section">
+    <div class="petals-title">✨ Birthday Wishes For You ✨</div>
+    <div class="petals-grid">
+      <div class="petal">
+        <span class="p-icon">🌸</span>
+        <div class="p-title">Endless Joy</div>
+        <div class="p-text">May laughter follow you everywhere you go, every single day.</div>
+      </div>
+      <div class="petal">
+        <span class="p-icon">🚀</span>
+        <div class="p-title">Soaring Success</div>
+        <div class="p-text">May every dream you dare to chase bow down at your feet.</div>
+      </div>
+      <div class="petal">
+        <span class="p-icon">💖</span>
+        <div class="p-title">Deep Love</div>
+        <div class="p-text">May love wrap around you like sunlight — endless, warm and golden.</div>
+      </div>
+      <div class="petal">
+        <span class="p-icon">🌿</span>
+        <div class="p-title">Vibrant Health</div>
+        <div class="p-text">May your body be strong, your spirit bright, your energy boundless.</div>
+      </div>
+      <div class="petal">
+        <span class="p-icon">🌈</span>
+        <div class="p-title">New Adventures</div>
+        <div class="p-text">May every year open doors more magnificent than the last.</div>
+      </div>
+      <div class="petal">
+        <span class="p-icon">🕊️</span>
+        <div class="p-title">Inner Peace</div>
+        <div class="p-text">May your heart always find its calm, even in the wildest storms.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- GOLDEN RULE -->
+  <div class="golden-rule" style="margin-top:8px">
+    <div class="gr-line"></div>
+    <span class="gr-gem">💗</span>
+    <div class="gr-line"></div>
+  </div>
+
+  <!-- HEART SECTION -->
+  <div class="heart-scroll">
+    <div class="hs-bg"></div>
+    <div class="hs-content">
+      <div class="hs-title">💗 From The Bottom of My Heart 💗</div>
+      <p class="hs-body">
+        Dear <span class="lh">Sharath</span> — there are friends, and then there are<br>
+        <span class="lh2">the ones the universe hand-picks</span> just for you.<br>
+        We share a <span class="lh3">strong friendship</span>, and you<br>
+        are that kind. The kind that makes life feel<br>
+        warmer, brighter, and <span class="lh3">impossibly worth it</span>.<br><br>
+        Your kindness is not small — it is the kind that<br>
+        <span class="lh">changes rooms, changes days, changes people</span>.<br>
+        The kind that leaves a mark long after you've left.<br><br>
+        On this birthday, I wish you not just happiness —<br>
+        I wish you a life <span class="lh2">so full, so beautifully yours</span>,<br>
+        that every single morning feels like a gift<br>
+        and every night ends with a grateful heart.<br><br>
+        <span class="lh">You deserve every beautiful thing coming your way.</span><br>
+        Today. Tomorrow. Always. 🌙🌟<br><br>
+        <span style="color:rgba(255,248,240,0.45);font-size:0.88rem;font-style:italic">— Written with all the love in the world, just for you.</span>
+      </p>
+    </div>
+  </div>
+
+  <!-- SIGNATURE -->
+  <div class="signature-block">
+    <div class="sig-pre">With Love &amp; Warm Wishes</div>
+    <div class="sig-name">Yogi</div>
+    <div class="sig-hearts">💛 💜 🌸 💫 🌹 ✨</div>
+    <div class="sig-hint">✦ click anywhere on the page to launch fireworks ✦</div>
+  </div>
+
+  <div class="footer-orn">✦ &nbsp; ✦ &nbsp; ✦</div>
+
+</div><!-- /screen-card -->
+
+<script>
+/* ═══════════════════════════════════════
+   GALAXY STARFIELD
+═══════════════════════════════════════ */
+(function(){
+  const c=document.getElementById('galaxy'),ctx=c.getContext('2d');
+  let W,H,stars=[];
+  function resize(){W=c.width=innerWidth;H=c.height=innerHeight}
+  window.addEventListener('resize',resize);resize();
+  for(let i=0;i<350;i++) stars.push({
+    x:Math.random(),y:Math.random(),
+    r:Math.random()*1.8+0.2,
+    phase:Math.random()*Math.PI*2,
+    spd:Math.random()*0.003+0.0004,
+    col:['255,255,220','210,180,255','255,200,210','180,230,255','255,240,180'][Math.floor(Math.random()*5)]
+  });
+  // nebula blobs
+  const nebulas=[
+    {x:0.15,y:0.2,r:220,c:'rgba(90,10,160,0.12)'},
+    {x:0.85,y:0.7,r:200,c:'rgba(160,10,60,0.1)'},
+    {x:0.5,y:0.5,r:300,c:'rgba(10,60,120,0.08)'},
+    {x:0.7,y:0.15,r:180,c:'rgba(180,100,10,0.08)'},
+  ];
+  let t=0;
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    // nebulas
+    nebulas.forEach(n=>{
+      const g=ctx.createRadialGradient(n.x*W,n.y*H,0,n.x*W,n.y*H,n.r);
+      g.addColorStop(0,n.c);g.addColorStop(1,'transparent');
+      ctx.beginPath();ctx.arc(n.x*W,n.y*H,n.r,0,Math.PI*2);
+      ctx.fillStyle=g;ctx.fill();
+    });
+    // shooting star
+    if(Math.random()<0.004){
+      const sx=Math.random()*W,sy=Math.random()*H*0.5,len=100+Math.random()*120;
+      const g=ctx.createLinearGradient(sx,sy,sx+len,sy+len*0.4);
+      g.addColorStop(0,'transparent');g.addColorStop(0.5,'rgba(255,245,200,0.9)');g.addColorStop(1,'transparent');
+      ctx.beginPath();ctx.strokeStyle=g;ctx.lineWidth=1.5;ctx.moveTo(sx,sy);ctx.lineTo(sx+len,sy+len*0.4);ctx.stroke();
+    }
+    // stars
+    stars.forEach(s=>{
+      const a=0.2+0.8*Math.abs(Math.sin(s.phase+t*s.spd));
+      ctx.beginPath();ctx.arc(s.x*W,s.y*H,s.r,0,Math.PI*2);
+      ctx.fillStyle=`rgba(${s.col},${a})`;ctx.fill();
+    });
+    t++;requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+/* ═══════════════════════════════════════
+   FIREWORKS ENGINE
+═══════════════════════════════════════ */
+const fwCanvas=document.getElementById('fw-canvas');
+const fwCtx=fwCanvas.getContext('2d');
+let fwW,fwH;
+function fwResize(){fwW=fwCanvas.width=innerWidth;fwH=fwCanvas.height=innerHeight}
+window.addEventListener('resize',fwResize);fwResize();
+let rockets=[],sparks2=[];
+const pal=['#f5c842','#ff7eb3','#c084fc','#22d3ee','#ff4500','#adff2f','#fff','#ffa500'];
+function mkRocket(x){return{x:x||fwW*0.1+Math.random()*fwW*0.8,y:fwH,tx:fwW*0.1+Math.random()*fwW*0.8,ty:fwH*0.08+Math.random()*fwH*0.5,color:pal[Math.floor(Math.random()*pal.length)],trail:[]}}
+function fwBurst(x,y,col,n){
+  const c=col||pal[Math.floor(Math.random()*pal.length)];
+  for(let i=0;i<(n||100);i++){
+    const a=Math.random()*Math.PI*2,sp=Math.random()*8+2;
+    sparks2.push({x,y,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp,life:1,decay:Math.random()*0.018+0.01,size:Math.random()*3+1,color:c,tail:Math.random()>0.35});
+  }
+  const c2=pal[Math.floor(Math.random()*pal.length)];
+  for(let i=0;i<30;i++){const a=Math.random()*Math.PI*2,sp=Math.random()*5+1;sparks2.push({x,y,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp,life:0.7,decay:Math.random()*0.025+0.015,size:Math.random()*2+0.5,color:c2})}
+}
+function fwDraw(){
+  fwCtx.clearRect(0,0,fwW,fwH);
+  rockets=rockets.filter(r=>{
+    const dx=r.tx-r.x,dy=r.ty-r.y,dist=Math.sqrt(dx*dx+dy*dy);
+    if(dist<10){fwBurst(r.x,r.y,r.color);return false}
+    const sp=Math.min(14,dist*0.08+3);r.x+=dx/dist*sp;r.y+=dy/dist*sp;
+    r.trail.push({x:r.x,y:r.y});if(r.trail.length>14)r.trail.shift();
+    r.trail.forEach((pt,i)=>{fwCtx.globalAlpha=(i/r.trail.length)*0.5;fwCtx.beginPath();fwCtx.arc(pt.x,pt.y,(i/r.trail.length)*2.5,0,Math.PI*2);fwCtx.fillStyle=r.color;fwCtx.fill()});
+    fwCtx.globalAlpha=1;fwCtx.beginPath();fwCtx.arc(r.x,r.y,3,0,Math.PI*2);fwCtx.fillStyle='#fff';fwCtx.fill();
+    return true;
+  });
+  sparks2=sparks2.filter(p=>{
+    p.x+=p.vx;p.y+=p.vy;p.vy+=0.07;p.vx*=0.99;p.life-=p.decay;
+    if(p.life<=0)return false;
+    fwCtx.globalAlpha=p.life;
+    if(p.tail){fwCtx.beginPath();fwCtx.moveTo(p.x,p.y);fwCtx.lineTo(p.x-p.vx*2,p.y-p.vy*2);fwCtx.strokeStyle=p.color;fwCtx.lineWidth=p.size*0.8;fwCtx.stroke()}
+    else{fwCtx.beginPath();fwCtx.arc(p.x,p.y,p.size,0,Math.PI*2);fwCtx.fillStyle=p.color;fwCtx.fill()}
+    fwCtx.globalAlpha=1;return true;
+  });
+  requestAnimationFrame(fwDraw);
+}
+fwDraw();
+
+/* ═══════════════════════════════════════
+   FLOATING PARTICLES
+═══════════════════════════════════════ */
+(function(){
+  const emojis=['🌸','✨','🌟','💛','💜','🎊','🎉','🎈','🌺','⭐','💫','🌙','🎀','🦋','🌹'];
+  const cols=['#f5c842','#ff7eb3','#a78bfa','#fff','#22d3ee'];
+  function spawn(){
+    const el=document.createElement('div');el.className='fp';
+    if(Math.random()>0.45){el.textContent=emojis[Math.floor(Math.random()*emojis.length)];el.style.fontSize=(Math.random()*14+8)+'px'}
+    else{const s=Math.random()*8+3;el.style.width=s+'px';el.style.height=s+'px';el.style.borderRadius='50%';el.style.background=cols[Math.floor(Math.random()*cols.length)];el.style.boxShadow=`0 0 8px ${cols[Math.floor(Math.random()*cols.length)]}`}
+    el.style.left=(Math.random()*100)+'vw';const d=Math.random()*10+7;
+    el.style.animationDuration=d+'s';el.style.animationDelay=(Math.random()*4)+'s';
+    document.body.appendChild(el);setTimeout(()=>el.remove(),(d+5)*1000);
+  }
+  for(let i=0;i<20;i++)spawn();setInterval(spawn,600);
+})();
+
+/* ═══════════════════════════════════════
+   CONFETTI
+═══════════════════════════════════════ */
+function confettiShower(n){
+  const cols=['#f5c842','#ff7eb3','#a78bfa','#fff','#22d3ee','#ff4500','#adff2f','#fb923c'];
+  for(let i=0;i<(n||100);i++){
+    const el=document.createElement('div');el.className='cp';
+    el.style.left=(Math.random()*100)+'vw';el.style.top='-30px';
+    el.style.width=(Math.random()*12+5)+'px';el.style.height=(Math.random()*7+3)+'px';
+    el.style.background=cols[Math.floor(Math.random()*cols.length)];
+    el.style.borderRadius=Math.random()>0.4?'50%':'3px';
+    const d=Math.random()*3+2;el.style.animationDuration=d+'s';el.style.animationDelay=(Math.random()*2)+'s';
+    document.body.appendChild(el);setTimeout(()=>el.remove(),(d+3)*1000);
+  }
+}
+
+/* ═══════════════════════════════════════
+   SCREEN FLOW: GIFT → ENVELOPE → CARD
+═══════════════════════════════════════ */
+function openGift(){
+  const box=document.getElementById('giftBox');
+  if(box.classList.contains('opening'))return;
+  box.classList.add('opening');
+  // burst stars
+  const stars2=['🌟','✨','💫','🎉','🎊','⭐','🌸'];
+  for(let i=0;i<stars2.length;i++){
+    const s=document.createElement('div');s.className='burst-star';
+    s.textContent=stars2[i%stars2.length];
+    const angle=(i/stars2.length)*Math.PI*2;
+    const dist=80+Math.random()*50;
+    s.style.setProperty('--bx',Math.cos(angle)*dist+'px');
+    s.style.setProperty('--by',Math.sin(angle)*dist+'px');
+    s.style.left='50%';s.style.top='30%';
+    s.style.animationDelay=(i*0.08)+'s';
+    box.appendChild(s);
+  }
+  setTimeout(()=>{
+    document.getElementById('screen-surprise').classList.add('hide');
+    document.getElementById('screen-envelope').classList.add('show');
+    confettiShower(60);
+  },900);
+}
+
+let envelopeOpened=false;
+function openEnvelope(){
+  if(envelopeOpened)return;
+  envelopeOpened=true;
+  document.getElementById('envHint').style.opacity='0';
+  
+  const now = new Date();
+  document.getElementById('openTimeBadge').innerText = 'Opened: ' + now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+  
+  // step 1: open flap
+  document.getElementById('envFlap').classList.add('env-flap-open');
+  // step 2: rise letter
+  setTimeout(()=>{
+    document.getElementById('waxSeal').style.opacity='0';
+    document.getElementById('letterPeek').classList.add('rise');
+  },700);
+  // step 3: go to card
+  setTimeout(()=>{
+    document.getElementById('screen-envelope').classList.add('hide');
+    document.getElementById('screen-card').classList.add('show');
+    confettiShower(120);
+    // auto fireworks
+    [500,1200,2200,3500,5000].forEach(d=>setTimeout(()=>rockets.push(mkRocket()),d));
+    setInterval(()=>rockets.push(mkRocket()),4500);
+    // click anywhere fires
+    document.addEventListener('click',e=>{rockets.push(mkRocket(e.clientX));fwBurst(e.clientX,e.clientY,null,80)});
+    // start typewriter
+    setTimeout(startTypewriter,600);
+  },2000);
+}
+
+/* ═══════════════════════════════════════
+   TYPEWRITER EFFECT
+═══════════════════════════════════════ */
+const twLines=[
+  "Dear Sharath,",
+  "",
+  "Today the universe pauses — just for a moment — to celebrate",
+  "the beautiful soul it gifted the world on this very day.",
+  "",
+  "You are not just a year older. You are a year more brilliant,",
+  "a year more loved, a year more of everything wonderful",
+  "that you already are.",
+  "",
+  "Our strong friendship, and you've always been",
+  "the brightest light. May this birthday mark the beginning",
+  "of your most golden chapter.",
+  "You deserve every star in the sky. 🌟"
+];
+
+function startTypewriter(){
+  const el=document.getElementById('typewriter-text');
+  const cur=document.getElementById('tw-cursor');
+  let lineIdx=0,charIdx=0,html='';
+  function type(){
+    if(lineIdx>=twLines.length){cur.style.display='none';return}
+    const line=twLines[lineIdx];
+    if(charIdx<line.length){
+      html+=line[charIdx]==='<'?'&lt;':line[charIdx];
+      el.innerHTML=html.replace(/\n/g,'<br>')+'<span id="tw-cursor" style="display:inline-block;width:2px;height:1em;background:#f5c842;vertical-align:middle;animation:twBlink 0.7s infinite"></span>';
+      charIdx++;
+      setTimeout(type,28+Math.random()*20);
+    } else {
+      html+=lineIdx<twLines.length-1?'\n':'';
+      lineIdx++;charIdx=0;
+      setTimeout(type,line.length===0?80:220);
+    }
+  }
+  type();
+}
+</script>
+</body>
+</html>
